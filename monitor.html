@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Моніторинг {{ class_name }}</title>
+</head>
+<body>
+    <h1>Моніторинг класу: {{ class_name }}</h1>
+    <div style="border: 5px solid #4facfe; border-radius: 20px; overflow: hidden;">
+        <img src="{{ url_for('video_feed') }}" width="800">
+    </div>
+    <br>
+    <a href="/" class="btn btn-primary">Назад до списку</a>
+</body>
+</html>

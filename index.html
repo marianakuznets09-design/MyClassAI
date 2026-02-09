@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>MyClassAI - Керування</title>
+</head>
+<body>
+    <h1>MyClassAI</h1>
+
+    <div class="add-form">
+        <form action="/add_class" method="post">
+            <input type="text" name="class_name" placeholder="Назва класу (напр. 10-А)" required>
+            <button type="submit" class="btn btn-primary">Створити клас</button>
+        </form>
+    </div>
+
+    <div class="card-container">
+    {% for cls in classes %}
+    <div class="class-card">
+        <h3>{{ cls }}</h3>
+        <div class="actions">
+            <a href="/class/{{ cls }}" class="btn btn-primary">Увійти в клас</a>
+
+            <a href="/delete_class/{{ cls }}" class="btn btn-danger"
+               onclick="return confirm('Видалити клас {{ cls }} та всіх учнів?')">🗑️</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+</body>
+</html>

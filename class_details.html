@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Урок у {{ class_name }}</title>
+</head>
+<body>
+
+    <header style="display: flex; justify-content: space-between; align-items: center; padding: 20px 50px; background: white; border-bottom: 2px solid #f0f2f5; transition: all 0.3s ease;">
+
+    <div style="display: flex; align-items: center; gap: 15px;">
+        <span style="font-size: 1.8em;"></span>
+        <h1 style="margin: 0; font-size: 1.8em; color: #333;">Урок у {{ class_name }}</h1>
+    </div>
+
+    <a href="/" class="btn btn-primary" style="padding: 10px 25px; text-decoration: none; border-radius: 8px; font-weight: bold; margin-left: 40px;">
+        На головну
+    </a>
+</header>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; gap: 15px; margin: 20px 0; width: 100%;">
+
+    <a href="{{ url_for('edit_class', class_name=class_name) }}" style="text-decoration: none; flex: 1;">
+        <button type="button" style="width: 100%; padding: 12px; font-weight: bold; border-radius: 10px; border: 1px solid #ddd; background-color: #f8f9fa; color: #000000; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
+            Редагувати список
+        </button>
+    </a>
+
+    <button id="attendance-btn" class="btn" onclick="toggleAttendance()"
+            style="flex: 1; padding: 12px; font-weight: bold; border-radius: 10px; border: 1px solid #ddd; background-color: #ffffff; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
+        Відвідуваність
+    </button>
+</div>
+
+
+</div>
+
+<div id="attendance-list" style="display: none; background: white; padding: 15px; border-radius: 10px; border: 1px solid #ddd; margin-top: 10px;">
+    <h4>Присутні учні:</h4>
+    <ul id="student-list-ul" style="list-style: none; padding: 0;">
+        {% for student in students %}
+        <li style="display: flex; justify-content: space-between; padding: 5px 0;">
+            <span>{{ student }}</span>
+            <input type="checkbox" id="check-{{ student }}">
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+        </button>
+
+
+
+    <div id="attendance-section" style="display: none;" class="section-box">
+        <h3>Присутність на сьогодні</h3>
+        <div class="attendance-list">
+    {% for student in students|sort %}
+    <div class="student-row" style="display: flex; align-items: center; padding: 10px; border-bottom: 1px solid #eee;">
+        <input type="checkbox" class="student-checkbox" name="present" value="{{ student }}" id="check-{{ student }}">
+        <label for="check-{{ student }}" style="margin-left: 10px; cursor: pointer;">{{ student }}</label>
+    </div>
+    {% endfor %}
+</div>
+    </div>
+    <section class="section-box" style="text-align: center;">
+        <div style="margin-bottom: 15px;">
+            <button id="camera-btn" class="btn btn-primary" onclick="toggleCamera()">Увімкнути камеру</button>
+        </div>
+        <div class="video-container" style="border: 4px solid #764ba2; border-radius: 15px; overflow: hidden; background: #000; min-height: 300px;">
+            <img id="video-feed" src="{{ url_for('video_feed') }}" style="width: 100%; display: none;">
+            <div id="camera-off-text" style="color: white; padding: 100px;">Камера вимкнена</div>
+        </div>
+        <div style="display: flex; gap: 10px; margin-top: 20px; width: 100%;">
+    <button id="immunity-btn" onclick="grantImmunity()"
+            style="flex: 1; padding: 15px; font-size: 1.1em; border-radius: 10px; background: #ffd1dc; border: 1px solid #ffb6c1; color: #7d4f50; font-weight: bold; cursor: pointer;">
+        ІМУНІТЕТ
+    </button>
+
+    <button id="search-btn" onclick="startSearch()"
+            style="flex: 2; padding: 15px; font-size: 1.1em; border-radius: 10px; background: #27ae60; border: none; color: white; font-weight: bold; cursor: pointer;">
+        ВИКЛИКАТИ ДО ДОШКИ
+    </button>
+</div>
+    </section>
+
+
+    <div style="width: 100%; max-width: 1000px; margin: 20px auto 0 auto; text-align: left;padding-left: 80px;">
+    <h3 style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px; font-size: 1.5rem; color: #333;">
+        Журнал активності
+    </h3>
+
+    <button onclick="resetAllImmunity()"
+            style="background-color: #ff4d4d; color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s;">
+        Скинути всі імунітети
+    </button>
+
+    <button onclick="resetFullTable()"
+                style="background-color: #6c757d; color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-weight: bold;">
+            Скинути усю таблицю
+        </button>
+    <a href="{{ url_for('export_journal') }}"
+       style="background-color: #28a745; color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-weight: bold; text-decoration: none; display: inline-block; margin-left: 5px;">
+        Зберегти (Excel)
+    </a>
+</div>
+    </div>
+</div>
+     <div class="section-box" style="background: white; border-radius: 15px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-top: 20px;">
+    <table class="activity-table">
+    <thead>
+        <tr>
+            <th>Учні</th>
+            <th>Кількість виходів</th>
+            <th>Імунітет</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for student in students|sort %}
+        <tr>
+            <td>{{ student }}</td>
+<td id="count-{{ student }}">{{ student_counts.get(student, 0) }}</td>
+            <td style="text-align: center;">
+                <input type="checkbox"
+                       class="immunity-checkbox"
+                       id="immunity-{{ student }}"
+                       onclick="manualToggleImmunity('{{ student }}')"
+                       style="width: 20px; height: 20px; cursor: pointer;">
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+
+    <script>
+    function toggleCamera() {
+    const feed = document.getElementById('video-feed');
+    const text = document.getElementById('camera-off-text');
+    const btn = document.getElementById('camera-btn');
+
+    // Перевіряємо, чи зараз камера вимкнена (картинка схована)
+    if (feed.style.display === 'none' || feed.src === "" || feed.src.includes('undefined')) {
+        // 1. Встановлюємо шлях до потоку (додаємо час, щоб уникнути кешу)
+        feed.src = "{{ url_for('video_feed') }}?t=" + new Date().getTime();
+
+        // 2. Показуємо елемент
+        feed.style.display = 'block';
+        text.style.display = 'none';
+
+        // 3. Змінюємо кнопку
+        btn.innerText = 'Вимкнути камеру';
+        btn.style.backgroundColor = '#e74c3c';
+    } else {
+        // 1. ПОВНІСТЮ зупиняє потік (це важливо!)
+        feed.src = "";
+        feed.removeAttribute('src');
+
+        // 2. Ховає елемент
+        feed.style.display = 'none';
+        text.style.display = 'block';
+
+        // 3. Повертає вигляд кнопки
+        btn.innerText = 'Увімкнути камеру';
+        btn.style.backgroundColor = '#4b6cb7';
+    }
+}
+
+    function startSearch() {
+    const searchBtn = document.getElementById('search-btn');
+
+
+    searchBtn.disabled = true;
+    searchBtn.innerText = "ШУКАЮ...";
+
+    fetch('/start_search')
+        .then(response => {
+            if (response.ok) {
+                console.log("Пошук запущено на сервері");
+                // Через 4 секунди повертаємо кнопку в звичайний стан
+                setTimeout(() => {
+                    searchBtn.disabled = false;
+                    searchBtn.innerText = "ВИКЛИКАТИ ДО ДОШКИ";
+                }, 4000);
+            }
+        })
+        .catch(error => console.error('Помилка:', error));
+}
+
+    function toggleAttendance() {
+    const list = document.getElementById('attendance-list');
+    const btn = document.getElementById('attendance-btn');
+
+    if (list.style.display === 'none' || list.style.display === '') {
+        list.style.display = 'block'; // Показуємо список
+        btn.style.backgroundColor = '#d1d4d9'; // Трохи затемнюємо кнопку
+        btn.innerText = 'Сховати відвідуваність';
+    } else {
+        list.style.display = 'none'; // Ховаємо список
+        btn.style.backgroundColor = '#f0f2f5';
+        btn.innerText = 'Відвідуваність (Натисніть, щоб відкрити)';
+    }
+}
+
+
+// Глобальна змінна, де зберігатимуться учні, яких ПРЯМО ЗАРАЗ бачить камера
+let aiDetectedStudents = [];
+
+// автоматично запитує список впізнаних учнів у сервера
+function syncAIPresence() {
+    fetch('/get_present_students')
+        .then(response => response.json())
+        .then(data => {
+            aiDetectedStudents = data.present; // Оновлюємо наш "розумний" список
+
+            // Візуально відмічає в списку тих, кого побачив ШІ
+            aiDetectedStudents.forEach(student => {
+                const checkbox = document.getElementById('check-' + student);
+                if (checkbox && !checkbox.checked) {
+                    checkbox.checked = true; // Ставимо галочку автоматично
+                    checkbox.parentElement.style.backgroundColor = "#e8f5e9"; // Підсвічуємо зеленим
+                }
+            });
+        });
+}
+
+
+setInterval(syncAIPresence, 2000);
+
+// надання імунітету
+function grantImmunity() {
+
+    const manualChecked = Array.from(document.querySelectorAll('.student-checkbox:checked'))
+                               .map(cb => cb.value.trim());
+
+    // Об'єднує
+    const allPresent = [...new Set([...aiDetectedStudents, ...manualChecked])];
+
+    if (allPresent.length === 0) {
+        alert("Камера ще нікого не впізнала, і галочки не поставлені!");
+        return;
+    }
+
+    const btn = document.getElementById('immunity-btn');
+    btn.disabled = true;
+    btn.innerText = "Обираю...";
+
+    fetch('/call_random_student', { // Використовуємо логіку зваженого вибору
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ present_students: allPresent })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === "success") {
+            setTimeout(() => {
+                alert("ІМУНІТЕТ НАДАНО: " + data.student);
+                // Відмічаємо візуально в таблиці
+                const immBox = document.getElementById('immunity-' + data.student);
+                if (immBox) immBox.checked = true;
+
+                btn.disabled = false;
+                btn.innerText = "ІМУНІТЕТ";
+            }, 3000);
+        }
+    });
+}
+
+function resetAllImmunity() {
+    if (!confirm("Ви впевнені, що хочете видалити імунітет у всіх учнів?")) return;
+
+    fetch('/reset_immunity', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === "success") {
+            // 1. Знаходимо всі галочки імунітету в таблиці і знімаємо їх
+            const checkboxes = document.querySelectorAll('.immunity-checkbox');
+            checkboxes.forEach(cb => {
+                cb.checked = false;
+                // Прибираємо рожеву підсвітку рядка, якщо вона була
+                cb.closest('tr').style.backgroundColor = 'transparent';
+            });
+
+            alert("Всі імунітети успішно анульовано!");
+        }
+    })
+    .catch(err => console.error("Помилка:", err));
+}
+
+function resetFullTable() {
+    if (!confirm("Ви впевнені, що хочете повністю очистити журнал (виходи та імунітети)?")) return;
+
+    fetch('/reset_full_table', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === "success") {
+            // 1. Очищаємо галочки імунітету
+            document.querySelectorAll('.immunity-checkbox').forEach(cb => {
+                cb.checked = false;
+                cb.closest('tr').style.backgroundColor = 'transparent';
+            });
+
+            // 2. Обнуляємо текст у колонці "Кількість виходів"
+            // Примітка: переконайтеся, що у вас в <td> з числом є клас або ID
+            document.querySelectorAll('[id^="count-"]').forEach(el => {
+                el.innerText = "0";
+            });
+
+            alert("Журнал повністю очищено!");
+        }
+    });
+}
+function updateCounts() {
+    fetch('/get_counts')
+        .then(response => response.json())
+        .then(data => {
+            // Проходимо по кожному учню, який є в отриманих даних
+            for (let student in data) {
+                const countElement = document.getElementById('count-' + student);
+                if (countElement) {
+                    // Оновлюємо цифру в таблиці, якщо вона змінилася
+                    countElement.innerText = data[student];
+                }
+            }
+        })
+        .catch(err => console.error("Помилка оновлення лічильників:", err));
+}
+
+// Запускаємо оновлення
+setInterval(updateCounts, 2000);
+</script>
+
+</body>
+</html>
